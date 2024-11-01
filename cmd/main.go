@@ -7,11 +7,8 @@ import (
 	"net/http"
 	"notify/config"
 	"notify/controllers"
-	"notify/pkg/amqp"
 	"notify/pkg/db"
 	"notify/pkg/redis"
-	"notify/processors"
-	"notify/workers"
 	"os"
 	"os/signal"
 	"syscall"
@@ -33,29 +30,29 @@ func main() {
 	defer redisClient.Close()
 
 	// Initialize RabbitMQ connection
-	rabbitMQConn := amqp.InitRabbitMQ()
-	defer rabbitMQConn.Close()
+	// rabbitMQConn := amqp.InitRabbitMQ()
+	// defer rabbitMQConn.Close()
 
-	rabbitMQChannel, erre := rabbitMQConn.Channel()
-	if erre != nil {
-		log.Fatalf("Failed to open RabbitMQ channel: %s", erre)
-	}
+	// rabbitMQChannel, erre := rabbitMQConn.Channel()
+	// if erre != nil {
+	// 	log.Fatalf("Failed to open RabbitMQ channel: %s", erre)
+	// }
 
-	defer rabbitMQChannel.Close()
+	// defer rabbitMQChannel.Close()
 
-	ctx, cancel := context.WithCancel(context.Background())
+	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// Create main notification processor
-	mainProcessor := workers.NewMainNotificationWorker(redisClient, db, config.Logger)
+	// mainProcessor := workers.NewMainNotificationWorker(redisClient, db, config.Logger)
 
 	// Create workers
-	emailWorker := workers.NewNotificationWorker(redisClient, db, workers.EmailQueue, processors.EmailProcessor)
+	// emailWorker := workers.NewNotificationWorker(redisClient, db, workers.EmailQueue, processors.EmailProcessor)
 	// smsWorker := workers.NewNotificationWorker(redisClient, db, "sms_queue", processors.SMSProcessor)
 
 	// Start workers
-	go mainProcessor.Start(ctx)
-	go emailWorker.Start(ctx)
+	// go mainProcessor.Start(ctx)
+	// go emailWorker.Start(ctx)
 	// go smsWorker.Start(ctx)
 
 	// Initialize the router
